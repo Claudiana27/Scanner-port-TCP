@@ -4,6 +4,7 @@ import threading
 import time
 import json
 from flask_cors import CORS
+import os  # <-- nécessaire pour récupérer la variable d'environnement PORT
 
 app = Flask(__name__)
 CORS(app)
@@ -21,7 +22,6 @@ def scan_port(ip, port):
         print(f"Port {port} ouvert, service: {service}")  # LOG ici
         return {"port": port, "status": "open", "service": service}
     except Exception as e:
-        # print(f"Port {port} fermé ou erreur: {e}")  # Optionnel, beaucoup trop verbeux
         return None
 
 @app.route("/scan-stream", methods=["GET"])
@@ -60,7 +60,7 @@ def scan_stream():
             with results_lock:
                 new_results = [r for r in results if r["port"] not in sent_ports]
             for r in new_results:
-                yield f"data: {json.dumps(r)}\n\n"  # <-- Utilisation de json.dumps ici !
+                yield f"data: {json.dumps(r)}\n\n"
                 sent_ports.add(r["port"])
             time.sleep(0.1)
 
@@ -70,4 +70,5 @@ def scan_stream():
 
 
 if __name__ == "__main__":
-    app.run(debug=True, threaded=True)
+    port = int(os.environ.get("PORT", 5000))  # <-- récupère le port Render
+    app.run(host="0.0.0.0", port=port, debug=True, threaded=True)

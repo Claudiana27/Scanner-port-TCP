@@ -16,7 +16,7 @@ function App() {
     setLogs(prev => [...prev, `📡 Démarrage du scan de ${target} (${portRange})...`]);
 
     // Construire l'URL avec query params
-    const url = `http://localhost:5000/scan-stream?target=${encodeURIComponent(target)}&portRange=${encodeURIComponent(portRange)}&threads=${threads}`;
+    const url = `https://scanner-port-tcp-3.onrender.com/scan-stream?target=${encodeURIComponent(target)}&portRange=${encodeURIComponent(portRange)}&threads=${threads}`;
 
     const source = new EventSource(url);
 
